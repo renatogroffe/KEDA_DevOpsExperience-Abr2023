@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workercontagem
+spec:
+  selector:
+    matchLabels:
+      app: workercontagem
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: workercontagem
+    spec:
+      containers:
+      - name: workercontagem
+        image: renatogroffe/workercontagem-rabbitmq-sql-appinsights-dotnet7:2
+        env:
+        - name: RabbitMQ__Queue
+          value: queue-contagem
+        - name: ConnectionStrings__ApplicationInsights
+          valueFrom:
+            secretKeyRef:
+              name: workercontagemsecret
+              key: ConnectionAppInsights
+        - name: ConnectionStrings__BaseContagem
+          valueFrom:
+            secretKeyRef:
+              name: workercontagemsecret
+              key: ConnectionSqlServer
+        - name: ConnectionStrings__RabbitMQ
+          valueFrom:
+            secretKeyRef:
+              name: workercontagemsecret
+              key: ConnectionRabbitMQ

@@ -1,0 +1,15 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: cron-scaledobject
+spec:
+  minReplicaCount: 5
+  scaleTargetRef:
+    name: testes-apicontagem
+  triggers:
+  - type: cron
+    metadata:
+      timezone: America/Sao_Paulo
+      start: 21 12 * * *
+      end: 26 12 * * *
+      desiredReplicas: "15"

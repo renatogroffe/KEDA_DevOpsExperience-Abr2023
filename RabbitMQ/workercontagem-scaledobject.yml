@@ -1,0 +1,34 @@
+# Scaler do RabbitMQ:
+# https://keda.sh/docs/2.10/scalers/rabbitmq-queue/
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-trigger-auth-workercontagem
+spec:
+  secretTargetRef:
+    - parameter: host
+      name: workercontagemsecret
+      key: ConnectionRabbitMQ
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: workercontagem-scaledobject
+spec:
+  scaleTargetRef:
+    name: workercontagem
+  pollingInterval: 15
+  cooldownPeriod:  120
+  minReplicaCount: 0
+  maxReplicaCount: 5
+  triggers:
+  - type: rabbitmq
+    metadata:
+      protocol: amqp
+      mode: QueueLength
+      value: "2"
+      activationValue: "1"
+      queueName: queue-contagem
+      vhostName: /
+    authenticationRef:
+      name: keda-trigger-auth-workercontagem

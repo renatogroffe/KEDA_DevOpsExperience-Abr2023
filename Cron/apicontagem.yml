@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testes-apicontagem
+spec:
+  selector:
+    matchLabels:
+      app: testes-apicontagem
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: testes-apicontagem
+    spec:
+      containers:
+        - name: apicontagem
+          image: renatogroffe/apicontagem-dotnet7-simulacaohealthcheck:2
+          env:
+          - name: MensagemVariavel
+            value: "Testes durante o DevOps Experience 2023"
+          ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: testes-apicontagem-service
+spec:
+  selector:
+    app: testes-apicontagem
+  ports:
+    - port: 80
+  type: LoadBalancer
